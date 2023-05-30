@@ -1,7 +1,3 @@
-//
-// Created by paulh on 4/2/2023.
-//
-
 #ifndef LAB_2_TRANZACTIONS_H
 #define LAB_2_TRANZACTIONS_H
 
@@ -19,6 +15,8 @@ public:
     void setId(int id);
 
     int getSum() const;
+
+    bool is_equal(Tranzactions &x);
 
     void setSum(int sum);
 

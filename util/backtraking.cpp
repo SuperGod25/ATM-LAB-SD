@@ -1,60 +1,97 @@
-//
-// Created by paulh on 4/2/2023.
-//
-
-#include <numeric>
 #include "backtraking.h"
-#include "../repo/Collection.h"
-#include "../repo/Iterator.h"
-#include <iostream>
+#include "../repo/Collection_Dinamic.h"
+#include "../repo/Iterator_Dinamic.h"
 
-int make_sum(std::vector<std::pair<int,int>> v)
-{
+
+std::vector<std::pair<int,int>> x;
+std::vector<Tranzactions> sol;
+
+int Solutie(int k,int sum){
     int s = 0;
-    for(auto i:v)
-        s+=i.first*i.second;
-    return s;
-}
-
-bool valid(std::vector<std::pair<int,int>> v,int sum,int new_el)
-{
-    int s = 0;
-    for(auto i:v)
-        s+=i.first*i.second;
-    return s <= sum;
-}
-
-
-bool solution(std::vector<std::pair<int,int>> v,int sum,int new_el)
-{
-    int s = 0;
-    for(auto i:v)
-        s+=i.first*i.second;
+    for(int i=0;i<k;i++)
+    {
+        s+=(x[i].first*x[i].second);
+    }
     return s == sum;
 }
 
-void back(std::vector<std::pair<int,int>> &elem,int sum,Collection &colection_of_cash,std::vector<Tranzactions> &final)
+int OK(int k,int sum){
+    for(int i=0;i<k-1;i++)
+    {
+        if(x[i].first == x[k-1].first)
+            return 0;
+    }
+    int s = 0;
+    for(int i=0;i<k;i++)
+    {
+        s+=(x[i].first*x[i].second);
+    }
+    return s<=sum;
+}
+
+void Afisare(int k)
 {
-    Iterator col(colection_of_cash);
-    while(col.valid()){
-        int cash = col.current();
-        int oc = col.getCurrentOccurrences();
-        while(oc > 0)
-        {
-            if (valid(elem, sum, col.current())) {
-                if (solution(elem, sum, col.current())) {
-                    final.emplace_back(0, make_sum(elem) + col.current(), elem);
-                }
-                elem.emplace_back(col.current(),oc);
+    std::vector<std::pair<int,int> > x1;
+    for(int i=0;i<k;i++)
+        x1.push_back(x[i]);
+    for(int i=0;i<x1.size()-1;i++)
+        for(int j=0;j<x1.size();j++)
+            if(x1[i].first > x1[j].first)
+            {
+                std::pair<int,int> aux;
+                aux = x1[i];
+                x1[i] = x1[j];
+                x1[j] = aux;
             }
-            col.next();
-            back(elem,sum+cash,colection_of_cash,final);
+    Tranzactions t;
+    t.setTypes(x1);
+    if(!sol.empty())
+    {
+        bool ok = true;
+        for(auto & i : sol)
+            if(i.is_equal(t))
+                ok = false;
+        if(ok)
+            sol.push_back(t);
+        return;
+    }
+    sol.push_back(t);
+}
+
+void Back(int k,int sum,Iterator_Dinamic<int> col){
+    while(col.valid()){
+        int count = col.current();
+        while(count > 0)
+        {
+            if(k < x.size())
+                x[k]= std::make_pair(col.current(),count);
+            else
+            {
+                x.push_back(std::make_pair(col.current(),count));
+            }
+            if( OK(k,sum) )
+            {
+                if(Solutie(k,sum))
+                {
+                    Afisare(k);
+                    break;
+                }
+                else
+                {
+                    Back(k+1,sum,col);
+                }
+
+            }
+            count--;
         }
+        col.next();
     }
 }
 
-std::vector<Tranzactions> aplly_back(int sum_to_be_paid,Collection &colection_of_cash)
-{
-    std::vector<int> vec;
 
+std::vector<Tranzactions> aplly_back(int sum_to_be_paid,Collection_Dinamic<int> &colection_of_cash)
+{
+    Iterator_Dinamic<int> cole(colection_of_cash);
+    Back(0,sum_to_be_paid,cole);
+    return sol;
 }

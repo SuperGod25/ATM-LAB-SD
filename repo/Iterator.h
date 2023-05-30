@@ -1,7 +1,3 @@
-//
-// Created by camel on 3/14/2023.
-//
-
 #ifndef SEM2_COLLECTION_ITERATOR_H
 #define SEM2_COLLECTION_ITERATOR_H
 
@@ -18,6 +14,7 @@ public:
     void first();
     void next();
     int current();
+    void remove(int elm,int ocur);
     int getCurrentOccurrences();
 };
 

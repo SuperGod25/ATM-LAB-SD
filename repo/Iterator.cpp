@@ -28,4 +28,13 @@ int Iterator::current() {
 
 int Iterator::getCurrentOccurrences() {
     return collection.nroccurrences(current());
-} 
+}
+
+void Iterator::remove(int elm, int ocur) {
+    bool ok = true;
+    do
+    {
+        ok = collection.remove(elm);
+        ocur--;
+    }while(ocur > 0 and ok);
+}

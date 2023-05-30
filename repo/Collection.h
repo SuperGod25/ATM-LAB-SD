@@ -1,7 +1,3 @@
-//
-// Created by camel on 3/14/2023.
-//
-
 #ifndef SEM2_COLLECTION_COLLECTION_H
 #define SEM2_COLLECTION_COLLECTION_H
 
